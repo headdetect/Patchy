@@ -22,7 +22,7 @@ namespace Patchy
     /// <summary>
     /// Interaction logic for MainWindow.xaml
     /// </summary>
-    public partial class MainWindow : Window
+    public partial class MainWindow
     {
         private System.Windows.Forms.NotifyIcon NotifyIcon { get; set; }
         private PeriodicTorrent BalloonTorrent { get; set; }
@@ -39,11 +39,11 @@ namespace Patchy
                     e.Row.MouseDoubleClick += TorrentGridMouseDoubleClick;
                 };
             fileListGrid.LoadingRow += (s, e) =>
-            {
-                e.Row.MouseDoubleClick -= FileListGridMouseDoubleClick;
-                e.Row.MouseDoubleClick += FileListGridMouseDoubleClick;
-            };
-            
+                {
+                    e.Row.MouseDoubleClick -= FileListGridMouseDoubleClick;
+                    e.Row.MouseDoubleClick += FileListGridMouseDoubleClick;
+                };
+
             Client = new ClientManager();
             Initialize();
             torrentGrid.ItemsSource = Client.Torrents;
@@ -53,23 +53,22 @@ namespace Patchy
 
         private void InitializeNotifyIcon()
         {
-            NotifyIcon = new System.Windows.Forms.NotifyIcon 
-            {
-                Text = "Patchy",
-                Icon = new System.Drawing.Icon(Application.GetResourceStream(
-                    new Uri("pack://application:,,,/Patchy;component/Images/patchy.ico" )).Stream),
-                Visible = true
-            };
+            NotifyIcon = new System.Windows.Forms.NotifyIcon
+                {
+                    Text = "Patchy",
+                    Icon = new System.Drawing.Icon(Application.GetResourceStream(new Uri("pack://application:,,,/Patchy;component/Images/patchy.ico")).Stream),
+                    Visible = true
+                };
             NotifyIcon.DoubleClick += NotifyIconClick;
             NotifyIcon.BalloonTipClicked += NotifyIconBalloonTipClicked;
             var menu = new System.Windows.Forms.ContextMenu();
             menu.MenuItems.Add("Add Torrent", (s, e) => ExecuteNew(null, null));
             menu.MenuItems.Add("Exit", (s, e) =>
-            {
-                NotifyIcon.Dispose();
-                AllowClose = true;
-                Close();
-            });
+                {
+                    NotifyIcon.Dispose();
+                    AllowClose = true;
+                    Close();
+                });
             NotifyIcon.ContextMenu = menu;
         }
 
@@ -82,8 +81,8 @@ namespace Patchy
             }
             else if (Client.Torrents.Any(t => !t.Complete))
             {
-                int progress = (int)(Client.Torrents.Where(t => !t.Complete).Select(t => t.Progress)
-                        .Aggregate((t, n) => t + n) / Client.Torrents.Count(t => !t.Complete));
+                int progress = (int) (Client.Torrents.Where(t => !t.Complete).Select(t => t.Progress)
+                                            .Aggregate((t, n) => t + n)/Client.Torrents.Count(t => !t.Complete));
                 NotifyIcon.Text = string.Format(
                     "Patchy - {0} torrent{3}, {1} downloading at {2}%",
                     Client.Torrents.Count,
@@ -91,7 +90,7 @@ namespace Patchy
                     progress,
                     Client.Torrents.Count == 1 ? "" : "s");
                 TaskbarItemInfo.ProgressState = TaskbarItemProgressState.Normal;
-                TaskbarItemInfo.ProgressValue = progress / 100.0;
+                TaskbarItemInfo.ProgressValue = progress/100.0;
             }
             else
             {
@@ -171,8 +170,8 @@ namespace Patchy
             var link = new MagnetLink(IgnoredClipboardValue);
             var name = HttpUtility.HtmlDecode(HttpUtility.UrlDecode(link.Name));
 
-            var path = Path.Combine(SettingsManager.DefaultDownloadLocation, 
-                ClientManager.CleanFileName(name));
+            var path = Path.Combine(SettingsManager.DefaultDownloadLocation,
+                                    ClientManager.CleanFileName(name));
 
             AddTorrent(link, path);
         }
@@ -194,7 +193,7 @@ namespace Patchy
         {
             var source = sender as ComboBox;
             var file = source.Tag as PeriodicFile;
-            file.Priority = (Priority)source.SelectedIndex;
+            file.Priority = (Priority) source.SelectedIndex;
         }
 
         private void FileListGridMouseDoubleClick(object sender, MouseButtonEventArgs e)
@@ -209,7 +208,7 @@ namespace Patchy
                 if (extension.Equals(".exe", StringComparison.OrdinalIgnoreCase))
                 {
                     open = MessageBox.Show("This file could be dangerous. Are you sure you want to open it?",
-                        "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
+                                           "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
                 }
                 if (open)
                 {
@@ -252,7 +251,7 @@ namespace Patchy
                 if (torrent.State == TorrentState.Downloading)
                 {
                     if (MessageBox.Show(torrent.Name + " is not complete. Are you sure you want to remove it?",
-                        "Confirm Removal", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                                        "Confirm Removal", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                         continue;
                 }
                 Client.RemoveTorrent(torrent);
@@ -266,7 +265,7 @@ namespace Patchy
                 if (torrent.State == TorrentState.Downloading)
                 {
                     if (MessageBox.Show(torrent.Name + " is not complete. Are you sure you want to remove it?",
-                        "Confirm Removal", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
+                                        "Confirm Removal", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.No)
                         continue;
                 }
                 Client.RemoveTorrentAndFiles(torrent);
@@ -277,7 +276,7 @@ namespace Patchy
         {
             var torrent = torrentGrid.SelectedItem as PeriodicTorrent;
             var link = string.Format("magnet:?xl={0}&dn={1}&xt=urn:btih:{2}",
-                torrent.Size, Uri.EscapeUriString(torrent.Name), Uri.EscapeUriString(torrent.Torrent.InfoHash.ToHex()));
+                                     torrent.Size, Uri.EscapeUriString(torrent.Name), Uri.EscapeUriString(torrent.Torrent.InfoHash.ToHex()));
             if (torrent.Torrent.TrackerManager.CurrentTracker != null)
                 link += "&tr=" + Uri.EscapeUriString(torrent.Torrent.TrackerManager.CurrentTracker.Uri.ToString());
             Clipboard.SetText(link);
@@ -314,7 +313,7 @@ namespace Patchy
             if (extension.Equals(".exe", StringComparison.OrdinalIgnoreCase))
             {
                 open = MessageBox.Show("This file could be dangerous. Are you sure you want to open it?",
-                    "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
+                                       "Warning", MessageBoxButton.YesNo, MessageBoxImage.Warning) == MessageBoxResult.Yes;
             }
             if (open)
             {
@@ -337,13 +336,13 @@ namespace Patchy
         private void menuReportBugClicked(object sender, RoutedEventArgs e)
         {
             var systemInfo = string.Format("OS Name: {0}" + Environment.NewLine +
-                "Edition: {1}" + Environment.NewLine +
-                "Service Pack: {2}" + Environment.NewLine +
-                "Version: {3}" + Environment.NewLine +
-                "Architecture: {4} bit", OSInfo.Name, OSInfo.Edition, OSInfo.ServicePack, OSInfo.Version, OSInfo.Bits);
+                                           "Edition: {1}" + Environment.NewLine +
+                                           "Service Pack: {2}" + Environment.NewLine +
+                                           "Version: {3}" + Environment.NewLine +
+                                           "Architecture: {4} bit", OSInfo.Name, OSInfo.Edition, OSInfo.ServicePack, OSInfo.Version, OSInfo.Bits);
             Process.Start(string.Format("https://github.com/SirCmpwn/Patchy/issues/new?title={0}&body={1}",
-                Uri.EscapeUriString("A brief description of your problem"),
-                Uri.EscapeUriString("[A more detailed description of your problem]" + Environment.NewLine + Environment.NewLine + systemInfo)));
+                                        Uri.EscapeUriString("A brief description of your problem"),
+                                        Uri.EscapeUriString("[A more detailed description of your problem]" + Environment.NewLine + Environment.NewLine + systemInfo)));
         }
     }
 }

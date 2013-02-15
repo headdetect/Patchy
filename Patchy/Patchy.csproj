@@ -34,6 +34,18 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Elysium">
+      <HintPath>..\lib\Elysium.dll</HintPath>
+    </Reference>
+    <Reference Include="Elysium.Notifications">
+      <HintPath>..\lib\Elysium.Notifications.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Expression.Drawing">
+      <HintPath>..\lib\Microsoft.Expression.Drawing.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Windows.Shell">
+      <HintPath>..\lib\Microsoft.Windows.Shell.dll</HintPath>
+    </Reference>
     <Reference Include="MonoTorrent">
       <HintPath>..\lib\MonoTorrent.dll</HintPath>
     </Reference>
@@ -135,6 +147,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="Patchy.sln.DotSettings" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
